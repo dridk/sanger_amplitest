@@ -1,20 +1,21 @@
 
 from abifpy import Trace
-
+import begin
 
 #==============================================================
-def amplitude_from_abif(filename,seq):
-	''' Return amplitude for each base ''' 
-	abif  = Trace(filename)
-	ampl  = abif.get_data("P1AM1")
+def amplitude_from_abif(filename):
+	''' 
+	Return amplitude dictionnary for each base. 
+	filename : sanger data abif format 
+	seq      : compute amplitude only for a sub sequence 
+	''' 
+	abif   = Trace(filename)
+	ampl   = abif.get_data("P1AM1")
 	output = []
-	index = abif.seq.find(seq)
-	end   = index+len(seq)
 
-	if index == -1 : 
-		print("cannot find sequence")
-		return
-	
+	index  = 0 
+	end    = len(abif.seq)
+
 	while index < end : 
 		base  = abif.seq[index]
 		output.append((base,abif.get_data("P1AM1")[index]))
@@ -23,8 +24,12 @@ def amplitude_from_abif(filename,seq):
 	return output
 #==============================================================
 
-def diff_amplitude(amplitudes):
-	''' amplitudes are a lists a same size ''' 
+
+@begin.start 
+def run(filename):
+	r = amplitude_from_abif(filename)
+	for item in r : 
+		print(item[0],"\t", item[1])
 
 
 
@@ -33,13 +38,3 @@ def diff_amplitude(amplitudes):
 
 
 
-
-r1 = amplitude_from_abif("data/A.ab1","CTTCCTGAAAACAACGTTCTGTCCCCCTTGCCGTCCCAAGCAATGGATGATTTGATGCTGTCCCCGGACGATATTGA")
-r2 = amplitude_from_abif("data/C.ab1","CTTCCTGAAAACAACGTTCTGTCCCCCTTGCCGTCCCAAGCAATGGATGATTTGATGCTGTCCCCGGACGATATTGA")
-
-a1 = [i[1] for i in r1] 
-a2 = [i[1] for i in r2] 
-
-
-print(a1)
-print(a2)
